@@ -1,0 +1,20 @@
+Random Forest Health Risk Model – Evaluation Report
+=================================================
+
+Accuracy: 0.6787
+
+Confusion Matrix:
+[[361  80 139]
+ [  1  51   4]
+ [  1  32 131]]
+
+Classification Report:
+              precision    recall  f1-score   support
+
+        high       0.99      0.62      0.77       580
+         low       0.31      0.91      0.47        56
+      medium       0.48      0.80      0.60       164
+
+    accuracy                           0.68       800
+   macro avg       0.60      0.78      0.61       800
+weighted avg       0.84      0.68      0.71       800
