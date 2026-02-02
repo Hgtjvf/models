@@ -1,0 +1,3 @@
+the model is not currently generating all the required/desired outputs.
+the output must be according to the E tab in: https://docs.google.com/document/d/195M11JMPusrrbUazuJjccPR9H-VdEf0ljr9OqYYHshQ/edit?tab=t.0
+moreover the inputs must also be fetched as mentioned in the above document link.

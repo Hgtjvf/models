@@ -1,0 +1,41 @@
+SMART PATIENT RISK MODEL — HEALTHCARE EVALUATION REPORT
+=================================================================
+
+🔹 OVERALL PERFORMANCE
+Accuracy : 0.0640
+
+🔹 PER-CLASS PRECISION & RECALL
+HIGH       | Precision: 1.0000 | Recall: 0.0143
+LOW        | Precision: 0.0486 | Recall: 1.0000
+MEDIUM     | Precision: 0.2727 | Recall: 0.0328
+
+🔹 CONFUSION MATRIX
+[[ 11 743  16]
+ [  0  47   0]
+ [  0 177   6]]
+
+🔹 FALSE NEGATIVES (Healthcare Critical)
+HIGH       | FN: 759 | FN Rate: 0.9857
+LOW        | FN: 0 | FN Rate: 0.0000
+MEDIUM     | FN: 177 | FN Rate: 0.9672
+
+🔹 FALSE POSITIVES (False Alerts)
+HIGH       | FP: 0
+LOW        | FP: 920
+MEDIUM     | FP: 16
+
+🔹 DETAILED CLASSIFICATION REPORT
+              precision    recall  f1-score   support
+
+        high       1.00      0.01      0.03       770
+         low       0.05      1.00      0.09        47
+      medium       0.27      0.03      0.06       183
+
+    accuracy                           0.06      1000
+   macro avg       0.44      0.35      0.06      1000
+weighted avg       0.82      0.06      0.04      1000
+
+=================================================================
+Healthcare Note:
+Low False Negatives for HIGH risk class is the most critical metric.
+If FN for HIGH risk is large, the model is unsafe for deployment.
