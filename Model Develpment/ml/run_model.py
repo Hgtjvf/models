@@ -14,8 +14,8 @@ import joblib
 # ============================================================
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-MODEL_PATH = os.path.join(BASE_DIR, "smart_patient_risk_model.joblib")
-DATA_PATH = os.path.join(BASE_DIR, "testing_dataset.csv")
+MODEL_PATH = os.path.join(BASE_DIR, "ml/models/model.joblib")
+DATA_PATH = os.path.join(BASE_DIR, "ml/data/testing_dataset.csv")
 
 
 # ============================================================

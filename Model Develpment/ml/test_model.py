@@ -20,9 +20,9 @@ from sklearn.metrics import (
 # ============================================================
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-MODEL_PATH = os.path.join(BASE_DIR, "smart_patient_risk_model.joblib")
-DATA_PATH = os.path.join(BASE_DIR, "testing_dataset.csv")
-REPORT_DIR = os.path.join(BASE_DIR, "reports")
+MODEL_PATH = os.path.join(BASE_DIR, "ml/models/model.joblib")
+DATA_PATH = os.path.join(BASE_DIR, "ml/data/testing_dataset.csv")
+REPORT_DIR = os.path.join(BASE_DIR, "ml/reports")
 
 os.makedirs(REPORT_DIR, exist_ok=True)
 
@@ -74,7 +74,7 @@ fn_rate = false_negatives / support
 # ============================================================
 report_path = os.path.join(REPORT_DIR, "evaluation_report.txt")
 
-with open(report_path, "w") as f:
+with open(report_path, "w", encoding="utf-8") as f:
     f.write("SMART PATIENT RISK MODEL — HEALTHCARE EVALUATION REPORT\n")
     f.write("=" * 65 + "\n\n")
 
