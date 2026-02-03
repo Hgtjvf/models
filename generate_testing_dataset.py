@@ -1,67 +1,118 @@
+# ============================================================
+# SMART PATIENT RISK BAND — TEST DATASET GENERATOR
+# Generates realistic sensor data + correct risk_level
+# ============================================================
+
 import pandas as pd
 import numpy as np
-from pathlib import Path
+import random
 
-# -------------------------------------------------
-# Output path
-# -------------------------------------------------
-BASE_DIR = Path(__file__).resolve().parent
-OUTPUT_PATH = BASE_DIR / "testing_dataset.csv"
+OUTPUT_FILE = "testing_dataset.csv"
+NUM_SAMPLES = 1000
 
-np.random.seed(42)
 
-N_SAMPLES = 4000
+# ============================================================
+# SECTION 1 — REALISTIC SENSOR VALUE GENERATORS
+# ============================================================
 
-# -------------------------------------------------
-# Generate realistic sensor data
-# -------------------------------------------------
-df = pd.DataFrame({
-    "heart_rate": np.random.randint(55, 140, N_SAMPLES),
-    "spo2_level": np.random.randint(88, 100, N_SAMPLES),
-    "respiration_rate": np.random.randint(10, 30, N_SAMPLES),
-    "body_temperature": np.round(np.random.uniform(35.5, 40.0, N_SAMPLES), 1),
-    "blood_pressure_sys": np.random.randint(90, 180, N_SAMPLES),
-    "blood_pressure_dia": np.random.randint(60, 120, N_SAMPLES),
-    "blood_glucose": np.random.randint(70, 220, N_SAMPLES),
-    "stress_level_index": np.random.randint(10, 100, N_SAMPLES),
-    "step_count": np.random.randint(0, 20000, N_SAMPLES),
-    "perfusion_index": np.round(np.random.uniform(0.5, 8.0, N_SAMPLES), 2),
-    "inter_beat_interval_ms": np.random.randint(500, 1200, N_SAMPLES),
-    "accel_x": np.round(np.random.uniform(-3, 3, N_SAMPLES), 2),
-    "accel_y": np.round(np.random.uniform(-3, 3, N_SAMPLES), 2),
-    "accel_z": np.round(np.random.uniform(-3, 3, N_SAMPLES), 2),
-    "gyro_x": np.round(np.random.uniform(-250, 250, N_SAMPLES), 2),
-    "gyro_y": np.round(np.random.uniform(-250, 250, N_SAMPLES), 2),
-    "gyro_z": np.round(np.random.uniform(-250, 250, N_SAMPLES), 2),
-})
+def rand_range(a, b):
+    return round(random.uniform(a, b), 2)
 
-# -------------------------------------------------
-# Risk level logic (MATCHES TRAINING CODE)
-# -------------------------------------------------
-def compute_risk(row):
+
+def generate_row():
+    heart_rate = rand_range(55, 140)
+    spo2_level = rand_range(85, 100)
+    respiration_rate = rand_range(10, 30)
+    body_temperature = rand_range(35.5, 40.0)
+    blood_pressure_sys = rand_range(95, 180)
+    blood_pressure_dia = rand_range(60, 110)
+    blood_glucose = rand_range(70, 250)
+    stress_level_index = rand_range(10, 100)
+    step_count = rand_range(0, 8000)
+    perfusion_index = rand_range(0.5, 10)
+    inter_beat_interval_ms = rand_range(600, 1500)
+    accel_x = rand_range(-4, 4)
+    accel_y = rand_range(-4, 4)
+    accel_z = rand_range(-4, 4)
+    gyro_x = rand_range(-300, 300)
+    gyro_y = rand_range(-300, 300)
+    gyro_z = rand_range(-300, 300)
+
+    # ========================================================
+    # SECTION 2 — SAME RISK LOGIC USED IN TRAINING
+    # ========================================================
     if (
-        row["heart_rate"] > 120
-        or row["spo2_level"] < 93
-        or row["body_temperature"] > 38
+        spo2_level < 92
+        or heart_rate > 125
+        or body_temperature > 38.5
+        or blood_pressure_sys > 160
     ):
-        return "high"
+        risk_level = "high"
+
     elif (
-        row["heart_rate"] > 95
-        or row["stress_level_index"] > 70
-        or row["blood_glucose"] > 160
+        heart_rate > 100
+        or blood_glucose > 180
+        or stress_level_index > 75
+        or respiration_rate > 24
     ):
-        return "medium"
+        risk_level = "medium"
+
     else:
-        return "low"
+        risk_level = "low"
 
-df["risk_level"] = df.apply(compute_risk, axis=1)
+    return [
+        heart_rate,
+        spo2_level,
+        respiration_rate,
+        body_temperature,
+        blood_pressure_sys,
+        blood_pressure_dia,
+        blood_glucose,
+        stress_level_index,
+        step_count,
+        perfusion_index,
+        inter_beat_interval_ms,
+        accel_x,
+        accel_y,
+        accel_z,
+        gyro_x,
+        gyro_y,
+        gyro_z,
+        risk_level,
+    ]
 
-# -------------------------------------------------
-# Save CSV
-# -------------------------------------------------
-df.to_csv(OUTPUT_PATH, index=False)
 
-print("✅ testing_dataset.csv generated successfully")
-print(f"📁 Location: {OUTPUT_PATH}")
-print("\n📊 Class distribution:")
-print(df["risk_level"].value_counts())
+# ============================================================
+# SECTION 3 — GENERATE DATASET
+# ============================================================
+
+columns = [
+    "heart_rate",
+    "spo2_level",
+    "respiration_rate",
+    "body_temperature",
+    "blood_pressure_sys",
+    "blood_pressure_dia",
+    "blood_glucose",
+    "stress_level_index",
+    "step_count",
+    "perfusion_index",
+    "inter_beat_interval_ms",
+    "accel_x",
+    "accel_y",
+    "accel_z",
+    "gyro_x",
+    "gyro_y",
+    "gyro_z",
+    "risk_level",
+]
+
+print("\n🧪 Generating test dataset...")
+
+data = [generate_row() for _ in range(NUM_SAMPLES)]
+
+df = pd.DataFrame(data, columns=columns)
+df.to_csv(OUTPUT_FILE, index=False)
+
+print("✅ Test dataset created:", OUTPUT_FILE)
+print("Rows:", len(df))

@@ -1,103 +1,124 @@
-from pathlib import Path
-from joblib import load
-import pandas as pd
-import os
+# ============================================================
+# SMART PATIENT RISK BAND — ADVANCED MODEL EVALUATION REPORT
+# Healthcare-focused evaluation
+# ============================================================
 
-from sklearn.model_selection import train_test_split
+import os
+import pandas as pd
+import numpy as np
+import joblib
 from sklearn.metrics import (
     accuracy_score,
+    precision_score,
+    recall_score,
+    confusion_matrix,
     classification_report,
-    confusion_matrix
 )
 
-# -------------------------------------------------
-# Paths
-# -------------------------------------------------
-BASE_DIR = Path(__file__).resolve().parent
+# ============================================================
+# SECTION 1 — PATHS
+# ============================================================
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-DATA_PATH = BASE_DIR / "data" / "testing_dataset.csv"
-MODEL_PATH = BASE_DIR / "models" / "model.joblib"
-REPORT_PATH = BASE_DIR / "reports" / "model_evaluation.txt"
+MODEL_PATH = os.path.join(BASE_DIR, "ml/models/model.joblib")
+DATA_PATH = os.path.join(BASE_DIR, "ml/data/testing_dataset.csv")
+REPORT_DIR = os.path.join(BASE_DIR, "ml/reports")
 
-# -------------------------------------------------
-# Load dataset
-# -------------------------------------------------
-if not DATA_PATH.exists():
-    raise FileNotFoundError(f"Dataset not found: {DATA_PATH}")
+os.makedirs(REPORT_DIR, exist_ok=True)
+
+# ============================================================
+# SECTION 2 — LOAD MODEL & DATA
+# ============================================================
+print("📦 Loading model and dataset...")
+
+data = joblib.load(MODEL_PATH)
+
+risk_model = data["risk_model"]
+label_encoder = data["label_encoder"]
+FEATURES = data["features"]
 
 df = pd.read_csv(DATA_PATH)
 
-# -------------------------------------------------
-# Load trained model bundle
-# -------------------------------------------------
-if not MODEL_PATH.exists():
-    raise FileNotFoundError(f"Model not found: {MODEL_PATH}")
+X = df[FEATURES]
+y_true = label_encoder.transform(df["risk_level"])
+y_pred = risk_model.predict(X)
 
-bundle = load(MODEL_PATH)
+class_names = label_encoder.classes_
 
-model = bundle["model"]
-label_encoder = bundle["label_encoder"]
-features = bundle["features"]
+# ============================================================
+# SECTION 3 — BASIC METRICS
+# ============================================================
+accuracy = accuracy_score(y_true, y_pred)
+precision = precision_score(y_true, y_pred, average=None)
+recall = recall_score(y_true, y_pred, average=None)
 
-# -------------------------------------------------
-# Prepare X and y (EXACT training logic)
-# -------------------------------------------------
-X = df[features]
-y = df["risk_level"]
+cm = confusion_matrix(y_true, y_pred)
 
-y_encoded = label_encoder.transform(y)
+# ============================================================
+# SECTION 4 — HEALTHCARE CRITICAL METRICS
+# ============================================================
+# False Negatives per class
+false_negatives = cm.sum(axis=1) - np.diag(cm)
 
-# -------------------------------------------------
-# Train-test split (evaluation only)
-# -------------------------------------------------
-X_train, X_test, y_train, y_test = train_test_split(
-    X,
-    y_encoded,
-    test_size=0.2,
-    random_state=42,
-    stratify=y_encoded
-)
+# False Positive per class
+false_positives = cm.sum(axis=0) - np.diag(cm)
 
-# -------------------------------------------------
-# Predict on test data
-# -------------------------------------------------
-y_pred = model.predict(X_test)
+# Support (how many samples per class)
+support = cm.sum(axis=1)
 
-# -------------------------------------------------
-# Metrics
-# -------------------------------------------------
-accuracy = accuracy_score(y_test, y_pred)
-conf_matrix = confusion_matrix(y_test, y_pred)
+# False Negative Rate (very important in healthcare)
+fn_rate = false_negatives / support
 
-report = classification_report(
-    y_test,
-    y_pred,
-    target_names=label_encoder.classes_
-)
+# ============================================================
+# SECTION 5 — SAVE IMPROVED REPORT
+# ============================================================
+report_path = os.path.join(REPORT_DIR, "evaluation_report.txt")
 
-# -------------------------------------------------
-# Save evaluation report
-# -------------------------------------------------
-os.makedirs(BASE_DIR / "reports", exist_ok=True)
+with open(report_path, "w", encoding="utf-8") as f:
+    f.write("SMART PATIENT RISK MODEL — HEALTHCARE EVALUATION REPORT\n")
+    f.write("=" * 65 + "\n\n")
 
-with open(REPORT_PATH, "w") as f:
-    f.write("Random Forest Health Risk Model – Evaluation Report\n")
-    f.write("=================================================\n\n")
+    f.write("🔹 OVERALL PERFORMANCE\n")
+    f.write(f"Accuracy : {accuracy:.4f}\n\n")
 
-    f.write(f"Accuracy: {accuracy:.4f}\n\n")
+    f.write("🔹 PER-CLASS PRECISION & RECALL\n")
+    for i, name in enumerate(class_names):
+        f.write(
+            f"{name.upper():<10} | Precision: {precision[i]:.4f} | Recall: {recall[i]:.4f}\n"
+        )
 
-    f.write("Confusion Matrix:\n")
-    f.write(str(conf_matrix))
+    f.write("\n")
+
+    f.write("🔹 CONFUSION MATRIX\n")
+    f.write(str(cm))
     f.write("\n\n")
 
-    f.write("Classification Report:\n")
-    f.write(report)
+    f.write("🔹 FALSE NEGATIVES (Healthcare Critical)\n")
+    for i, name in enumerate(class_names):
+        f.write(
+            f"{name.upper():<10} | FN: {false_negatives[i]} | FN Rate: {fn_rate[i]:.4f}\n"
+        )
 
-# -------------------------------------------------
-# Console output
-# -------------------------------------------------
-print("\n✅ Model Evaluation Complete")
-print(f"Accuracy: {accuracy:.4f}")
-print("\nConfusion Matrix:\n", conf_matrix)
-print("\nClassification Report:\n", report)
-print(f"\n📄 Report saved at: {REPORT_PATH}")
+    f.write("\n")
+
+    f.write("🔹 FALSE POSITIVES (False Alerts)\n")
+    for i, name in enumerate(class_names):
+        f.write(
+            f"{name.upper():<10} | FP: {false_positives[i]}\n"
+        )
+
+    f.write("\n")
+
+    f.write("🔹 DETAILED CLASSIFICATION REPORT\n")
+    f.write(classification_report(y_true, y_pred, target_names=class_names))
+
+    f.write("\n")
+    f.write("=" * 65 + "\n")
+    f.write("Healthcare Note:\n")
+    f.write(
+        "Low False Negatives for HIGH risk class is the most critical metric.\n"
+        "If FN for HIGH risk is large, the model is unsafe for deployment.\n"
+    )
+
+print("\n✅ Advanced evaluation report generated.")
+print("📁 Saved at:", report_path)

@@ -1,4 +1,4 @@
-Random Forest Health Risk Model – Evaluation Report
+Random Forest Health Risk Model â€“ Evaluation Report
 =================================================
 
 Accuracy: 0.6787
