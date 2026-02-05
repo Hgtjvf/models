@@ -1,0 +1,7 @@
+event,accuracy,precision,recall,false_alert_rate
+heart_attack_risk,1.0,1.0,1.0,0.0
+arrhythmia_risk,0.999,1.0,0.984,0.0
+respiratory_failure_risk,0.999,1.0,0.977,0.0
+stroke_risk,1.0,1.0,1.0,0.0
+sepsis_risk,1.0,1.0,1.0,0.0
+severe_fall_risk,0.999,1.0,0.96,0.0

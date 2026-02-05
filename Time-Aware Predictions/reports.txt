@@ -1,0 +1,16 @@
+📄 Phase-2 Model Evaluation Report
+----------------------------------
+
+Overall Metrics:
+MAE : 0.0329
+RMSE: 0.0426
+R²  : 0.1026
+
+Per-Horizon Metrics:
+risk_15min   | MAE: 0.0200 | RMSE: 0.0254 | R²: 0.2210
+risk_1hour   | MAE: 0.0296 | RMSE: 0.0371 | R²: 0.1053
+risk_6hours  | MAE: 0.0386 | RMSE: 0.0480 | R²: 0.0669
+risk_24hours | MAE: 0.0433 | RMSE: 0.0541 | R²: 0.0174
+
+✅ Report generated successfully.
+
