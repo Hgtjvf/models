@@ -1,0 +1,30 @@
+Patient 1 Performance:
+  Accuracy : 0.9091
+  Precision: 0.5000
+  Recall   : 1.0000
+  F1 Score : 0.6667
+----------------------------------------
+Patient 3 Performance:
+  Accuracy : 1.0000
+  Precision: 1.0000
+  Recall   : 1.0000
+  F1 Score : 1.0000
+----------------------------------------
+Patient 4 Performance:
+  Accuracy : 0.8545
+  Precision: 0.3846
+  Recall   : 1.0000
+  F1 Score : 0.5556
+----------------------------------------
+Patient 5 Performance:
+  Accuracy : 1.0000
+  Precision: 1.0000
+  Recall   : 1.0000
+  F1 Score : 1.0000
+----------------------------------------
+Patient 2 Performance:
+  Accuracy : 0.7455
+  Precision: 0.2632
+  Recall   : 1.0000
+  F1 Score : 0.4167
+----------------------------------------
