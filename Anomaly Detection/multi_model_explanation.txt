@@ -1,0 +1,71 @@
+1️⃣ Individual variability in vitals
+
+Each patient’s normal vital ranges are different.
+
+Example:
+
+Patient A: HR normally 60–80 bpm
+
+Patient B: HR normally 90–110 bpm
+
+A single model would treat Patient B’s normal 95 bpm as anomalous if it’s trained on Patient A’s data.
+
+Patient-specific models learn the “normal pattern” for that particular person, so anomalies are truly unusual for them, not just unusual for the population.
+
+2️⃣ Personalized anomaly detection
+
+Health signals like HR, HRV, SpO₂, Temperature, Activity, FallEvent are highly individualized.
+
+Isolation Forest works best when trained on the actual distribution of “normal” data.
+
+By training one model per patient, the system can detect subtle deviations that might indicate early risk.
+
+3️⃣ Better detection accuracy
+
+A global model would be too general:
+
+High false positives for patients whose vitals are naturally outside the average.
+
+High false negatives for patients whose anomalies are within population norms.
+
+Patient-specific models reduce both false positives and false negatives.
+
+4️⃣ Privacy & modularity
+
+Each model can be stored and updated independently per patient.
+
+Allows for:
+
+Adding new patients without retraining everyone else
+
+Retraining individual models as more patient data is collected
+
+Easier debugging if a model is underperforming
+
+5️⃣ Computational efficiency for streaming data
+
+For real-time monitoring:
+
+Only the relevant patient’s model is loaded for prediction
+
+Reduces memory and CPU usage compared to a single huge global model
+
+In short:
+
+Each patient is unique, and vital signs are personal. Multiple models ensure personalized, accurate, and sensitive anomaly detection, which is essential for early health risk alerts.
+
+
+
+
+
+
+
+
+
+Here’s a concise, viva-friendly version:
+
+> Each patient’s vital signs have unique normal ranges.
+> A single model would misclassify normal variations as anomalies.
+> Patient-specific models detect true abnormalities accurately and individually.
+
+This is short, clear, and easy to explain in 2–3 lines.
